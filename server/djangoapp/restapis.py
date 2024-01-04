@@ -38,8 +38,12 @@ def get_request(url, **kwargs):
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 def post_request (url, json_payload, **kwargs):
+    print("**************post_request***********************")
     try:
-        requests.post(url, params=kwargs, json=json_payload).
+        print("**************response***********************")
+        response = requests.post(url, params=kwargs, json=json_payload)
+       
+        print(response)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -118,6 +122,16 @@ def get_dealers_by_state_from_cf(url, state):
             results.append(dealer_obj)
     return results
 
+
+# Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
+# def analyze_review_sentiments(text):
+# - Call get_request() with specified arguments
+# - Get the returned sentiment label such as Positive or Negative
+def analyze_review_sentiments(text):
+
+    return  ""
+
+
 def  get_dealer_reviews_from_cf (url, dealerId):
     results = []
     # Call get_request with a URL parameter
@@ -131,6 +145,7 @@ def  get_dealer_reviews_from_cf (url, dealerId):
         dealers = json_result
         # For each dealer object
         for dealer in dealers:
+
             # Get its content in `doc` object
             # dealer_doc = dealer
             # # Create a CarDealer object with values in `doc` object
@@ -138,18 +153,32 @@ def  get_dealer_reviews_from_cf (url, dealerId):
             #                        id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
             #                        short_name=dealer_doc["short_name"],
             #                        st=dealer_doc["st"], zip=dealer_doc["zip"])
-            dealer_obj = DealerReview(
-                name=dealer["full_name"]
-            )
+            if dealer["purchase"]:
+                dealer_obj = DealerReview(
+                    name=dealer["name"],
+                    dealership = dealer["dealership"],
+                    purchase = dealer["purchase"],
+                    review = dealer["review"],
+                    purchase_date = dealer ["purchase_date"],
+                    car_make = dealer["car_make"],
+                    car_model = dealer["car_model"],
+                    car_year = dealer["car_year"],
+                    
+                    id = dealer["id"],
+                    sentiment= analyze_review_sentiments(dealer["review"]),
+                )
+            else :
+                dealer_obj = DealerReview(
+                    name=dealer["name"],
+                    dealership = dealer["dealership"],
+                    review = dealer["review"],
+                    id = dealer["id"],
+                    sentiment= analyze_review_sentiments(dealer["review"]),
+                    purchase = dealer["purchase"],
+                    purchase_date = "",
+                    car_make = "",
+                    car_model = "",
+                    car_year = "",
+                )
             results.append(dealer)
     return results
-# Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
-# - Call get_request() with specified arguments
-# - Get the returned sentiment label such as Positive or Negative
-def analyze_review_sentiments(text):
-
-
-
-
-

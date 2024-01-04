@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf,post_request 
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request ,analyze_review_sentiments
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -90,9 +90,12 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {} 
     if request.method == "GET":
-        url = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        url = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         dealerships = get_dealer_reviews_from_cf(url, dealer_id)
+        print("sdnfoasndfoaienfoaneofaef")
+        print(dealerships)
+        print("sdnfoasndfoaienfoaneofaef")
         # Concat all dealer's short name
         # dealer_names = ' '.join([dealer for dealer in dealerships])
         # Return a list of dealer short name
@@ -103,16 +106,31 @@ def get_dealer_details(request, dealer_id):
 # def add_review(request, dealer_id):
 # ...
 def add_review(request, dealer_id):
-    url =  url = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
-    if request.method =="POST":
-        review = dict()
-        review["time"] = datetime.utcnow().isoformat()
-        review["dealership"] = 11
-        review["review"] = "This is a great car dealer"
-        json_payload = dict()
-        json_payload["review"] = review
-        postResult = post_request(url,json_payload , dealerId=dealer_id)
-        return HttpResponse(postResult)
-        
+    url = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+    print("*****************************************")
+    print(request.method)
+    print("*****************************************")
+    if request.user.is_authenticated:
+
+        if request.method =="GET":
+            print("************************")
+            print(request.user.is_authenticated)
+            print("************************")
+            review = dict()
+            review["time"] = datetime.utcnow().isoformat()
+            review["dealership"] = 11
+            review["review"] = "This is a great car dealer"
+            review["purchase"] = false
+            json_payload = dict()
+            json_payload["review"] = review
+            print("************************")
+            print(json_payload)
+            print("************************")
+            postResult = post_request(url,json_payload , dealerId=dealer_id)
+            print("************************")
+            print(postResult)
+            print("************************")
+            return HttpResponse(postResult)
+            
 
     
