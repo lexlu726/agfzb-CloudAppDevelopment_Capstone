@@ -80,7 +80,7 @@ def get_dealers_from_cf(url, **kwargs):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
 def get_dealer_by_id_from_cf(url, **kwargs):
-    results = []
+    
     id = kwargs.get("id")
     # Call get_request with a URL parameter
     if id:
@@ -100,8 +100,8 @@ def get_dealer_by_id_from_cf(url, **kwargs):
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
                                    st=dealer_doc["st"], zip=dealer_doc["zip"])
-            results.append(dealer_obj["id"])
-    return results
+            result = dealer_obj
+    return result
 
 def get_dealers_by_state_from_cf(url, state):
     results = []
@@ -129,7 +129,7 @@ def get_dealers_by_state_from_cf(url, state):
 # - Get the returned sentiment label such as Positive or Negative
 def analyze_review_sentiments(text):
 
-    return  ""
+    return  "positive"
 
 
 def  get_dealer_reviews_from_cf (url, dealerId):
@@ -145,14 +145,6 @@ def  get_dealer_reviews_from_cf (url, dealerId):
         dealers = json_result
         # For each dealer object
         for dealer in dealers:
-
-            # Get its content in `doc` object
-            # dealer_doc = dealer
-            # # Create a CarDealer object with values in `doc` object
-            # dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
-            #                        id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
-            #                        short_name=dealer_doc["short_name"],
-            #                        st=dealer_doc["st"], zip=dealer_doc["zip"])
             if dealer["purchase"]:
                 dealer_obj = DealerReview(
                     name=dealer["name"],
@@ -180,5 +172,5 @@ def  get_dealer_reviews_from_cf (url, dealerId):
                     car_model = "",
                     car_year = "",
                 )
-            results.append(dealer)
+            results.append(dealer_obj)
     return results

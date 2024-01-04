@@ -47,8 +47,28 @@
             </ul>
         </div>
     </nav>
-
+    
     <!-- Add reviews as cards -->
+    <h1>Reviews for {{dealership.full_name}}</h1>
+    <div class="container-fluid">
+        <div class="container">
+            <div class="card-columns">
+                {% for dealer in target %}
+                <div class="card">
+                    <img  class="card-img-left" src = "{{MEDIA_URL}}emoji/positive.png" width="50" height="50">
+                    <div class="card-body">
+                        <h3 class="card-title" >{{dealer.name}}</h3>
+                        <h3 class="card-title" >{{dealer.car_year}}</h3>
+                        <p class="card-text">{{dealer.review}}</p>
+                    </div>
+                </div>
+        
+                
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
 
     </body>
 
