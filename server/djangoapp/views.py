@@ -10,6 +10,10 @@ from datetime import datetime
 import logging
 import json
 
+carDealerURL = "https://lexlu726-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+reviewsURL = "https://lexlu726-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+postReviewURL = "https://lexlu726-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -74,9 +78,9 @@ def registration_request(request):
 def get_dealerships(request):
     context = {} 
     if request.method == "GET":
-        url = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        # url = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url)
+        dealerships = get_dealers_from_cf(carDealerURL)
         # Concat all dealer's short name
         # dealer_ids = ' '.join([dealer.id for dealer in dealerships])
         # Return a list of dealer short name
@@ -90,13 +94,14 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {} 
     if request.method == "GET":
-        carDealerURL = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
-        reviewsURL = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        # carDealerURL = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        # reviewsURL = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         dealership = get_dealer_by_id_from_cf(carDealerURL,id = dealer_id) 
         reviews = get_dealer_reviews_from_cf(reviewsURL, dealer_id)
         context["dealership"] = dealership
         context["target"] = reviews
+        context["dealer_id"] = dealer_id
         return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
@@ -107,27 +112,29 @@ def add_review(request, dealer_id):
     print("*****************************************")
     print(request.method)
     print("*****************************************")
+    context = {} 
+    dealership = get_dealer_by_id_from_cf(carDealerURL,id = dealer_id) 
+    reviews = get_dealer_reviews_from_cf(reviewsURL, dealer_id)
+    context["dealership"] = dealership
+    context["reviews"] = reviews
+    context["dealer_id"] = dealer_id
+    if request.method =="GET":
+        return render (request, 'djangoapp/add_review.html', context)
     if request.user.is_authenticated:
 
-        if request.method =="GET":
-            print("************************")
-            print(request.user.is_authenticated)
-            print("************************")
+        if request.method =="POST":
+
             review = dict()
             review["time"] = datetime.utcnow().isoformat()
-            review["dealership"] = 11
+            review["dealership"] = dealer_id
             review["review"] = "This is a great car dealer"
             review["purchase"] = false
             json_payload = dict()
             json_payload["review"] = review
-            print("************************")
-            print(json_payload)
-            print("************************")
-            postResult = post_request(url,json_payload , dealerId=dealer_id)
-            print("************************")
-            print(postResult)
-            print("************************")
-            return HttpResponse(postResult)
+
+            postResult = post_request(postReviewURL,json_payload , dealerId=dealer_id)
+
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
             
 
     

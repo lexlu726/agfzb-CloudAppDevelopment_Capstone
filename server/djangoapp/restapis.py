@@ -25,11 +25,11 @@ def get_request(url, **kwargs):
             params["return_analyzed_text"] = kwargs["return_analyzed_text"]
             response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
                                                 auth=HTTPBasicAuth('apikey', api_key))
+
         else:
             # no authentication GET
             response = requests.get(url, headers={'Content-Type': 'application/json'},params=kwargs)
             # Call get method of requests library with URL and parameters
-
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -70,6 +70,7 @@ def get_dealers_from_cf(url, **kwargs):
         for dealer in dealers:
             # Get its content in `doc` object
             dealer_doc = dealer
+
             # Create a CarDealer object with values in `doc` object
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
