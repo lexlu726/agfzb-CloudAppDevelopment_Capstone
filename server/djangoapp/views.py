@@ -109,30 +109,51 @@ def get_dealer_details(request, dealer_id):
 # ...
 def add_review(request, dealer_id):
     url = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
-    print("*****************************************")
-    print(request.method)
-    print("*****************************************")
+
     context = {} 
     dealership = get_dealer_by_id_from_cf(carDealerURL,id = dealer_id) 
     reviews = get_dealer_reviews_from_cf(reviewsURL, dealer_id)
     context["dealership"] = dealership
     context["reviews"] = reviews
     context["dealer_id"] = dealer_id
+
     if request.method =="GET":
         return render (request, 'djangoapp/add_review.html', context)
     if request.user.is_authenticated:
 
         if request.method =="POST":
-
+            print("*****************************************")
+            print(request.POST)
+            print(request.POST.dict())
+            print("*****************************************")
+            inputInfo = request.POST.dict()
             review = dict()
+            review["id"] = len(reviews) + 1 
+            review["name"] = request.user.username
+            review["dealership"] = inputInfo['car']
+            review["review"] = inputInfo['content']
+            if inputInfo['purchasecheck'] == 'on':
+                review["purchase"] = "true"
+            else:
+                review["purchase"] = "false"
+            if review["purchase"] == "true":
+                review["purchase_date"] = inputInfo['purchasedDate']
+                review["car_make"] = inputInfo['purchasedDate']
+                review["car_model"] = inputInfo['purchasedDate']
+                review["car_year"] = inputInfo['purchasedDate']
+
+
+            
             review["time"] = datetime.utcnow().isoformat()
-            review["dealership"] = dealer_id
-            review["review"] = "This is a great car dealer"
-            review["purchase"] = false
+            
+            
+
             json_payload = dict()
             json_payload["review"] = review
-
-            postResult = post_request(postReviewURL,json_payload , dealerId=dealer_id)
+            print("****************json_payload***********************")
+            print(json_payload)
+            print("****************json_payload***********************")
+            # postResult = post_request(postReviewURL,json_payload , dealerId=dealer_id)
 
             return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
             

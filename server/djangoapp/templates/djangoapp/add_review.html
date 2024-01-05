@@ -8,64 +8,66 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <style>
+        label {
+            font-size: 23px;
+        }
 
+        .btn-check{
+            width : 20px;
+            height:20px;
+        }
+      </style>
 </head>
     <body>
     <!--Add review form here -->
     <div class= "container">
-        <form action="{% url 'djangoapp:add_review' dealer_id%}" >
-            <div class= "container-fluid">
-                <div class="row">
-                    <div class="col">
-                        <h1>Add a review about {{dealership.full_name}}</h1>
-                    </div>
-                    
-                </div >
-                <div class="row">
-                    <div class="col">
-                        <h2>Enter the review content:<h2>
-                    </div>
-                </div >
-                <div class="row">
-                    <div class="col">
-                        <textarea class="form-control" id="content" name="content" rows="2" required></textarea> 
-                    </div>
-    
-                </div >
-                <div class="row">
-                    <div class="col-1">
-                        <input  type="checkbox" name="purchasecheck" id="purchasecheck"></input>
-                    </div>
-                    <div class="col-8">
-                        <h5> Has purchased the car from {{dealership.full_name}} (select purchased car information below if checked)</h5>
-                    </div>
-                </div >
-                <div class="row">
-                    <div class="col"> 
-                        <span>Select your car (model-make-year)</span>
-                        <select name="car" id="car" class="form-select" required>
-                            {% for car in cars %}
-                                <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
-                            {% endfor %}
-                        </select>
-                        </br>
-                    </div>
-                </div >
-                <div class="row">
-                    
-                </div >
-                <div class="row">
-                    
-                </div >
-                <div class="row">
-                    
-                </div >
-                
-                
+        <form method="POST" class="row row-cols-lg-auto g-3 align-items-center" action="{% url 'djangoapp:add_review' dealer_id%}" >{% csrf_token %}
+
+            <div class="col-12">
+                <div class="form-check">
+                    <h1>Add a review about {{dealership.full_name}}</h1>
+                    <h2>Enter the review content:<h2>
+                </div>
                 
             </div>
-
-
+            <div class="col-12">
+                <div class="form-check">
+                    <textarea class="form-control" id="content" name="content" rows="5"  required></textarea> 
+                </div>
+                
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input  class="btn-check" id="btncheck1" autocomplete="off" type="checkbox" name="purchasecheck" id="purchasecheck" ></input>
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Has purchased the car from {{dealership.full_name}} (select purchased car information below if checked)
+                    </label>
+                </div>
+            </div>
+            <div class="col-12"> 
+                <div class="form-check">
+                    <label class="form-check-label" for="flexCheckDefault">Select your car (model-make-year)</label>
+                    <select name="car" id="car" class="form-select" required>
+                        {% for car in reviews %}
+                            <option selected value={{car.dealership}}>{{car.car_model}}-{{car.car_make}}-{{ car.car_year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-12"> 
+                <div class="form-check">
+                    <label class="form-check-label" for="flexCheckDefault">Select Your Purchase Date:</label>
+                </div>
+                <div class="form-check">
+                    <input type="date" id="purchasedDate" name="purchasedDate">
+                </div>
+            </div>
+            <div class="col-12"> 
+                <div class="form-check">
+                    <input class="btn btn-primary" type="submit" value="Submit">
+                </div>
+            </div>
         </from>
     </div>
 
