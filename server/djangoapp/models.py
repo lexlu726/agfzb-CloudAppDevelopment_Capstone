@@ -24,9 +24,25 @@ class CarMake(models.Model):
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
 class CarModel(models.Model):
+
+
+    SEDAN = "Sedan"
+    SUV = "SUV"
+    WAGON = "Wagon"
+    MINIVAN = "Minivan"
+    TRUCK = "Truck"
+
+    CAR_TYPES = [
+        (SEDAN, "Sedan"),
+        (SUV, "SUV"),
+        (WAGON, "Wagon"),
+        (MINIVAN, "Minivan"),
+        (TRUCK, "Truck")
+    ]
+
     Name = models.CharField(max_length = 30 )
     Dealer_Id = models.IntegerField(default=1,primary_key=True)
-    Type = models.CharField(max_length = 30 )
+    Type = models.CharField(max_length = 30, choices= CAR_TYPES, default= SEDAN)
     Year = models.DateField()
     CARMAKE = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     def __str__(self):

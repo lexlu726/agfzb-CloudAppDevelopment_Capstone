@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarDealer
+from .models import CarDealer, CarMake, CarModel
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request ,analyze_review_sentiments,get_dealer_by_id_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -10,9 +10,13 @@ from datetime import datetime
 import logging
 import json
 
-carDealerURL = "https://lexlu726-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
-reviewsURL = "https://lexlu726-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
-postReviewURL = "https://lexlu726-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+
+cURL = "https://lexlu726-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/"
+carDealerURL = f'{cURL}/dealerships/get'
+
+fiveURL = "https://lexlu726-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/"
+reviewsURL = f'{fiveURL}/api/get_reviews'
+postReviewURL = f'{fiveURL}/api/post_review'
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -118,6 +122,7 @@ def add_review(request, dealer_id):
     context["dealer_id"] = dealer_id
 
     if request.method =="GET":
+        context["cars"] = CarModel.objects.all()
         return render (request, 'djangoapp/add_review.html', context)
     if request.user.is_authenticated:
 

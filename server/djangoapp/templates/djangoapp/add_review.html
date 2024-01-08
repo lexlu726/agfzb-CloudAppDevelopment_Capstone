@@ -49,8 +49,8 @@
                 <div class="form-check">
                     <label class="form-check-label" for="flexCheckDefault">Select your car (model-make-year)</label>
                     <select name="car" id="car" class="form-select" required>
-                        {% for car in reviews %}
-                            <option selected value={{car.dealership}}>{{car.car_model}}-{{car.car_make}}-{{ car.car_year }}</option>
+                        {% for car in cars %}
+                            <option selected value={{car.dealer_id}}>{{car.Type}}-{{car.CARMAKE.Name}}-{{ car.Year|date:"Y"}}</option>
                         {% endfor %}
                     </select>
                 </div>
